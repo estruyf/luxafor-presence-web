@@ -11,12 +11,26 @@ interface AppProps extends AuthProviderState {
   refreshUpdate: (nrOfMinutes: string) => void;
 }
 
+const splitHours = (time: string): { hour: number, minutes: number} | null => {
+  if (time && time.includes(":")) {
+    const daySplit = time.split(":");
+    return {
+      hour: parseInt(daySplit[0]),
+      minutes: parseInt(daySplit[1])
+    }
+  }
+
+  return null;
+}
+
 const App = (props: AppProps) => {
   // const [authCalled, setAuthCalled] = useState(false);
   const [color, setColor] = useState(DEFAULT_COLOR);
   const [presence, setPresence] = useState("");
-  const [deviceId, setDeviceId] = useState(Luxafor.getDeviceId());
+  const [deviceId, setDeviceId] = useState(Luxafor.getDeviceSetting("Device:ID"));
   const [nrOfMinutes, setMinutes] = useState("2");
+  const [startDay, setStartDay] = useState(Luxafor.getDeviceSetting("StartTime"));
+  const [endDay, setEndDay] = useState(Luxafor.getDeviceSetting("EndTime"));
 
   if (!props.account) {
     // props.onSignIn();
@@ -24,7 +38,7 @@ const App = (props: AppProps) => {
 
   const deviceChange = (newIdInput: React.ChangeEvent<HTMLInputElement>) => {
     if (newIdInput && newIdInput.target && newIdInput.target.value) {
-      Luxafor.setDeviceId(newIdInput.target.value);
+      Luxafor.setDeviceSetting("Device:ID", newIdInput.target.value);
       setDeviceId(newIdInput.target.value);
     }
   };
@@ -36,27 +50,63 @@ const App = (props: AppProps) => {
     });
   }
 
+  const startTime = splitHours(startDay);
+  const endTime = splitHours(endDay);
+  const crntDate = new Date();
+  let statusMsg: string | null = null;
+  let statusColor: string | null = null;
+
+  if (startTime && (crntDate.getHours() < startTime.hour || crntDate.getHours() === startTime.hour && crntDate.getMinutes() < startTime.minutes)) {
+    statusMsg = "Out of office";
+    statusColor = "000000";
+  }
+
+  if (endTime && (crntDate.getHours() > endTime.hour || crntDate.getHours() === endTime.hour && crntDate.getMinutes() > endTime.minutes)) {
+    statusMsg = "Out of office";
+    statusColor = "000000";
+  }
+
+  const timeChange = (name: string, time: string) => {
+    if (name && time) {
+      Luxafor.setDeviceSetting(name, time);
+      if (name === "StartTime") {
+        setStartDay(time);
+      } else {
+        setEndDay(time);
+      }
+    }
+  };
+
   return (
     <div className="App">
       <section className="App-login">
         {!props.account ? (
           <button onClick={props.onSignIn}>Sign In</button>
         ) : (
-          <button onClick={props.onSignOut}>Sign Out</button>
+        <button onClick={props.onSignOut}>Sign Out: {props.account.userName}</button>
         )}
 
-        <input value={deviceId} placeholder="Device ID" onChange={deviceChange} />
-        <input value={nrOfMinutes} placeholder="Refresh rate in minutes" type="number" onChange={e => {
+        <input className="input__device-id" value={deviceId} placeholder="Device ID" onChange={deviceChange} />
+        <input className="input__refresh" value={nrOfMinutes} placeholder="Refresh rate in minutes" type="number" onChange={e => {
           props.refreshUpdate(e.target.value);
           setMinutes(e.target.value);
         }} />
+
+        <input className="input__start" value={startDay} placeholder="Start day" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" onChange={e => timeChange("StartTime", e.target.value)} />
+        <input className="input__end" value={endDay} placeholder="End day" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" onChange={e => timeChange("EndTime", e.target.value)} />
       </section>
 
       <header className="App-header" style={{
-        backgroundColor: `#${color}`
+        backgroundColor: `#${statusColor || color}`
       }} >
         <h1>Luxafor - Presence</h1>
-        { props.presence && <h2>{props.presence}</h2> }
+        {
+          statusMsg ? (
+            <h2>{statusMsg}</h2>
+          ) : (
+            props.presence && <h2>{props.presence}</h2>
+          )
+        }
       </header>
     </div>
   );

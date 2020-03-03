@@ -57,16 +57,16 @@ export default class Luxafor {
     }
   }
 
-  public static getDeviceId(): string {
+  public static getDeviceSetting(name: string): string {
     if (localStorage) {
-      return localStorage.getItem("Luxafor:Device:ID") || "";
+      return localStorage.getItem(`Luxafor:${name}`) || "";
     }
     return "";
   }
 
-  public static setDeviceId(deviceId: string): void {
+  public static setDeviceSetting(name: string, value: string): void {
     if (localStorage) {
-      localStorage.setItem("Luxafor:Device:ID", deviceId);
+      localStorage.setItem(`Luxafor:${name}`, value);
     }
   }
 }
