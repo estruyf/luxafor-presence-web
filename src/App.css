@@ -42,6 +42,10 @@
   background-color: #FFFFFF;
 }
 
+.App-login input {
+  margin-left: 5px;
+}
+
 @media all and (max-width:30em) {
   a.button1 {
     display: block;

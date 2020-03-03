@@ -8,6 +8,7 @@ import Luxafor, { DEFAULT_COLOR } from "./services/Luxafor";
 interface AppProps extends AuthProviderState {
   onSignIn: () => void;
   onSignOut: () => void;
+  refreshUpdate: (nrOfMinutes: string) => void;
 }
 
 const App = (props: AppProps) => {
@@ -15,6 +16,7 @@ const App = (props: AppProps) => {
   const [color, setColor] = useState(DEFAULT_COLOR);
   const [presence, setPresence] = useState("");
   const [deviceId, setDeviceId] = useState(Luxafor.getDeviceId());
+  const [nrOfMinutes, setMinutes] = useState("2");
 
   if (!props.account) {
     // props.onSignIn();
@@ -44,6 +46,10 @@ const App = (props: AppProps) => {
         )}
 
         <input value={deviceId} placeholder="Device ID" onChange={deviceChange} />
+        <input value={nrOfMinutes} placeholder="Refresh rate in minutes" type="number" onChange={e => {
+          props.refreshUpdate(e.target.value);
+          setMinutes(e.target.value);
+        }} />
       </section>
 
       <header className="App-header" style={{

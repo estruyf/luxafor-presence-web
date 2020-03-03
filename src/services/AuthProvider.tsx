@@ -24,6 +24,8 @@ export interface AuthProviderState {
 
 export default (C: any) => class AuthProvider extends Component<AuthProviderProps, AuthProviderState> {
   private authCalled: boolean = false;
+  private nrOfMinutes: number = 2;
+  private refreshTimer: any;
   
   constructor(props: AuthProviderProps) {
     super(props);
@@ -145,9 +147,9 @@ export default (C: any) => class AuthProvider extends Component<AuthProviderProp
       });
     }
     
-    window.setTimeout(() => {
+    this.refreshTimer = setTimeout(() => {
       this.queryPresence();
-    }, 10000);
+    }, this.nrOfMinutes * 60 * 1000);
   }
      
   /**
@@ -155,6 +157,25 @@ export default (C: any) => class AuthProvider extends Component<AuthProviderProp
    */
   public onSignOut() {
     msalApp.logout();
+
+    if (this.refreshTimer) {
+      clearTimeout(this.refreshTimer);
+      this.refreshTimer = null;
+    }
+  }
+
+  public updateRefresh = (nrOfMinutes: string) => {
+    const value = parseInt(nrOfMinutes);
+    if (!isNaN(value) && value) {
+      if (this.refreshTimer) {
+        clearTimeout(this.refreshTimer);
+        this.refreshTimer = null;
+      }
+
+      this.refreshTimer = setTimeout(() => {
+        this.queryPresence();
+      }, value * 60 * 1000);
+    }
   }
       
   /**
@@ -167,7 +188,8 @@ export default (C: any) => class AuthProvider extends Component<AuthProviderProp
          error={this.state.error}
          presence={this.state.presence}
          onSignIn={() => this.onSignIn(useRedirectFlow)}
-         onSignOut={() => this.onSignOut()} />
+         onSignOut={() => this.onSignOut()}
+         refreshUpdate={this.updateRefresh} />
     );
   }
 };
