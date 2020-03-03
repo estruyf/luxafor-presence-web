@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './App.css';
 import AuthProvider, { AuthProviderState } from "./services/AuthProvider";
 import Luxafor, { DEFAULT_COLOR } from "./services/Luxafor";
+import { Availability, Presence } from './models';
 
 // TODO: Specify the ID of the Luxafor device
 
@@ -21,6 +22,13 @@ const splitHours = (time: string): { hour: number, minutes: number} | null => {
   }
 
   return null;
+}
+
+const setDeviceColor = (deviceId: string, presence: string, setColor:(color: string) => void, setPresence:(presence: string) => void) => {
+  Luxafor.setColor(deviceId, presence as string).then(color => {
+    setColor(color);
+    setPresence(presence);
+  });
 }
 
 const App = (props: AppProps) => {
@@ -43,13 +51,6 @@ const App = (props: AppProps) => {
     }
   };
 
-  if (deviceId && props.presence && presence !== props.presence) {
-    Luxafor.setColor(deviceId, props.presence as string).then(color => {
-      setColor(color);
-      setPresence(props.presence as string);
-    });
-  }
-
   const startTime = splitHours(startDay);
   const endTime = splitHours(endDay);
   const crntDate = new Date();
@@ -57,13 +58,19 @@ const App = (props: AppProps) => {
   let statusColor: string | null = null;
 
   if (startTime && (crntDate.getHours() < startTime.hour || crntDate.getHours() === startTime.hour && crntDate.getMinutes() < startTime.minutes)) {
-    statusMsg = "Out of office";
+    statusMsg = Availability.Offline;
     statusColor = "000000";
   }
 
   if (endTime && (crntDate.getHours() > endTime.hour || crntDate.getHours() === endTime.hour && crntDate.getMinutes() > endTime.minutes)) {
-    statusMsg = "Out of office";
+    statusMsg = Availability.Offline;
     statusColor = "000000";
+  }
+
+  if (deviceId && props.presence && presence !== props.presence && !statusMsg) {
+    setDeviceColor(deviceId, props.presence as string, setColor, setPresence);
+  } else if (statusMsg && presence !== Availability.Offline) {
+    setDeviceColor(deviceId, Availability.Offline, setColor, setPresence);
   }
 
   const timeChange = (name: string, time: string) => {
