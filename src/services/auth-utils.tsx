@@ -61,7 +61,7 @@ export const GRAPH_REQUESTS = {
 export const msalApp = new UserAgentApplication({
   auth: {
     clientId: "66204339-daf1-40fa-aa31-57342272edce",
-    authority: "https://login.microsoftonline.com/1a8ddc4e-a051-46a5-b1a2-0438a5f7f8c4",
+    authority: "https://login.microsoftonline.com/common",
     validateAuthority: true,
     postLogoutRedirectUri: "https://luxafor-presence.azurewebsites.net",
     navigateToLoginRequestUrl: false
