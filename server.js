@@ -6,6 +6,7 @@ const fetch = require('node-fetch');
 const API_URL = "https://api.luxafor.com/webhook/v1/actions/solid_color";
 
 const app = express();
+app.use(express.static(path.join(__dirname, 'build')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(function(req, res, next) {
