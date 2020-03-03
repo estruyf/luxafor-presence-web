@@ -63,7 +63,7 @@ export const msalApp = new UserAgentApplication({
     clientId: "66204339-daf1-40fa-aa31-57342272edce",
     authority: "https://login.microsoftonline.com/1a8ddc4e-a051-46a5-b1a2-0438a5f7f8c4",
     validateAuthority: true,
-    postLogoutRedirectUri: "http://localhost:3000",
+    postLogoutRedirectUri: "https://luxafor-presence.azurewebsites.net",
     navigateToLoginRequestUrl: false
   },
   cache: {
