@@ -117,11 +117,14 @@ class App extends React.Component<AppProps, AppState> {
 
     let doCheck = true;
     if (statusMsg) {
-      Luxafor.setColor(deviceId, Availability.Offline);
-      this.setState({
-        presence: statusMsg as string,
-        color: statusColor as string
-      });
+      // Only update if needed
+      if (statusMsg !== this.state.presence) {
+        Luxafor.setColor(deviceId, Availability.Offline);
+        this.setState({
+          presence: statusMsg as string,
+          color: statusColor as string
+        });
+      }
       doCheck = false;
     }
 
