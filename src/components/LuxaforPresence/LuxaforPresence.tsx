@@ -10,7 +10,7 @@ export const LuxaforPresence = () => {
       {
         info => (
           <main className="app__main" style={{
-            backgroundColor: info.color
+            backgroundColor: info.color === "000000" ? "282c34" : info.color
           }}>
             <h1>Luxafor - Presence</h1>
             {

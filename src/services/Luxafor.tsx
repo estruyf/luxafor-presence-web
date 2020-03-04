@@ -1,6 +1,6 @@
 import { Availability } from "../models";
 
-export const DEFAULT_COLOR = "282c34";
+export const DEFAULT_COLOR = "000000";
 export const API_URL = "/api/setColor";
 
 export const KEY_DEVICE_ID = "Device:ID";
