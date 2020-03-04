@@ -6,26 +6,16 @@ import {
   isIE,
   GRAPH_ENDPOINTS,
   GRAPH_REQUESTS
-} from "./auth-utils";
-import { Account } from "msal";
-import { Presence } from "../models";
+} from "../../constants";
+import { Presence } from "../../models";
+import { AuthProviderProps, AuthProviderState } from '.';
 
 // If you support IE, our recommendation is that you sign-in using Redirect APIs
 const useRedirectFlow = isIE();
 // const useRedirectFlow = true;
 
-export interface AuthProviderProps {}
-
-export interface AuthProviderState {
-  account: Account | null;
-  error: string | null;
-  presence: string | null;
-}
-
 export default (C: any) => class AuthProvider extends Component<AuthProviderProps, AuthProviderState> {
   private authCalled: boolean = false;
-  private nrOfMinutes: number = 2;
-  private refreshTimer: any;
   
   constructor(props: AuthProviderProps) {
     super(props);
@@ -56,10 +46,6 @@ export default (C: any) => class AuthProvider extends Component<AuthProviderProp
     this.setState({
       account
     });
-    
-    if (account) {
-      this.queryPresence(useRedirectFlow);
-    }
   }
   
   /**
@@ -109,47 +95,7 @@ export default (C: any) => class AuthProvider extends Component<AuthProviderProp
         account: loginResponse.account,
         error: null
       });
-
-      this.queryPresence();
     }
-  }
-
-  /**
-   * Start querying the MS graph for the presence
-   * 
-   * @param fetchMsGraph 
-   */
-  public queryPresence = async (useRedirectFlow?: boolean) => {
-    try {
-      let token;
-
-      try {
-        token = await this.acquireToken(GRAPH_REQUESTS.PRESENCE, useRedirectFlow);
-      } catch (error) {
-        this.setState({
-          error: error.message
-        });
-        return;
-      }
-
-
-      if (token) {
-        const presence: Presence = await fetchMsGraph(GRAPH_ENDPOINTS.PRESENCE, token.accessToken);
-        if (presence && presence.availability) {
-          this.setState({
-            presence: presence.availability
-          });
-        }
-      }
-    } catch (error) {
-      this.setState({
-        error: "Unable to fetch Graph profile."
-      });
-    }
-    
-    this.refreshTimer = setTimeout(() => {
-      this.queryPresence();
-    }, this.nrOfMinutes * 60 * 1000);
   }
      
   /**
@@ -157,25 +103,12 @@ export default (C: any) => class AuthProvider extends Component<AuthProviderProp
    */
   public onSignOut() {
     msalApp.logout();
-
-    if (this.refreshTimer) {
-      clearTimeout(this.refreshTimer);
-      this.refreshTimer = null;
-    }
   }
 
-  public updateRefresh = (nrOfMinutes: string) => {
-    const value = parseInt(nrOfMinutes);
-    if (!isNaN(value) && value) {
-      if (this.refreshTimer) {
-        clearTimeout(this.refreshTimer);
-        this.refreshTimer = null;
-      }
+  
 
-      this.refreshTimer = setTimeout(() => {
-        this.queryPresence();
-      }, value * 60 * 1000);
-    }
+  public getAccessToken(): string {
+    return "";
   }
       
   /**
@@ -189,7 +122,7 @@ export default (C: any) => class AuthProvider extends Component<AuthProviderProp
          presence={this.state.presence}
          onSignIn={() => this.onSignIn(useRedirectFlow)}
          onSignOut={() => this.onSignOut()}
-         refreshUpdate={this.updateRefresh} />
+         acquireToken={this.acquireToken} />
     );
   }
 };

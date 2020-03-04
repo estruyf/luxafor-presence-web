@@ -1,0 +1,16 @@
+.app__footer {
+  position: fixed;
+  height: 50px;
+  line-height: 50px;
+  width: 100%;
+  bottom: 0;
+  color: white;
+}
+
+.app__footer svg {
+  margin: 0 5px;
+}
+
+.app__footer_github {
+  min-width: 20px !important; 
+}

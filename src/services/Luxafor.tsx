@@ -1,9 +1,14 @@
 import { Availability } from "../models";
 
-export const DEFAULT_COLOR = "000000";
+export const DEFAULT_COLOR = "282c34";
 export const API_URL = "/api/setColor";
 
-export default class Luxafor {
+export const KEY_DEVICE_ID = "Device:ID";
+export const KEY_REFRESH_NR = "RefreshNr";
+export const KEY_START_TIME = "StartTime";
+export const KEY_END_TIME = "EndTime";
+
+export class Luxafor {
 
   public static async setColor(deviceId: string, presence: string): Promise<string> {
     let color: string = DEFAULT_COLOR;
@@ -57,14 +62,14 @@ export default class Luxafor {
     }
   }
 
-  public static getDeviceSetting(name: string): string {
+  public static getDeviceSetting<T>(name: string): T | string {
     if (localStorage) {
       return localStorage.getItem(`Luxafor:${name}`) || "";
     }
     return "";
   }
 
-  public static setDeviceSetting(name: string, value: string): void {
+  public static setDeviceSetting(name: string, value: any): void {
     if (localStorage) {
       localStorage.setItem(`Luxafor:${name}`, value);
     }
