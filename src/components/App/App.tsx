@@ -16,6 +16,7 @@ import { splitHours } from '../../helpers/TimeHelpers';
  * TODO:
  * - Override the presence status
  * - Change the colors
+ * - Manual or automated work
  */
 const theme = createMuiTheme({
   palette: {
