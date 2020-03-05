@@ -34,7 +34,7 @@ export const LuxaforPresence = () => {
 
           return (
             <main className="app__main" style={{
-              backgroundColor: `#${color}`
+              backgroundColor: `${color}`
             }}>
               <h1>Luxafor - Presence</h1>
               {

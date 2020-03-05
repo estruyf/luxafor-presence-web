@@ -57,38 +57,40 @@ class Header extends React.Component<HeaderProps, HeaderState> {
               <Grid item xs={12}>
                 <Button onClick={onSignOut} variant="outlined" color="secondary">Sign Out: {account.userName}</Button>
               </Grid>
-              <Grid item xs={3}>
-                <TextField label="Device ID" 
-                           variant="filled" 
-                           required
-                           value={deviceId}
-                           onChange={this.deviceChange} />
-              </Grid>
-              <Grid item xs={3}>
-                <TextField label="Refresh time (minutes)" 
-                           variant="filled"
-                           value={refreshNr ? refreshNr : ""}
-                           type="number"
-                           inputProps={{ min: "1", max: "10", step: "1" }}
-                           onChange={this.refreshChange} />
-              </Grid>
-              <Grid item xs={3}>
-                <TextField label="Start time" 
-                           variant="filled"
-                           value={startTime}
-                           inputProps={{
-                            pattern: "([01]?[0-9]|2[0-3]):[0-5][0-9]"
-                           }}
-                           onChange={e => updateTime(TimeType.StartTime, e.target.value)} />
-              </Grid>
-              <Grid item xs={3}>
-                <TextField label="End time" 
-                           variant="filled"
-                           value={endTime}
-                           inputProps={{
-                            pattern: "([01]?[0-9]|2[0-3]):[0-5][0-9]"
-                           }}
-                           onChange={e => updateTime(TimeType.EndTime, e.target.value)} />
+              <Grid className="app__header__inputs" container>
+                <Grid item xs={3}>
+                  <TextField label="Device ID" 
+                            variant="filled" 
+                            required
+                            value={deviceId}
+                            onChange={this.deviceChange} />
+                </Grid>
+                <Grid item xs={3}>
+                  <TextField label="Refresh time (minutes)" 
+                            variant="filled"
+                            value={refreshNr ? refreshNr : ""}
+                            type="number"
+                            inputProps={{ min: "1", max: "10", step: "1" }}
+                            onChange={this.refreshChange} />
+                </Grid>
+                <Grid item xs={3}>
+                  <TextField label="Start time" 
+                            variant="filled"
+                            value={startTime}
+                            inputProps={{
+                              pattern: "([01]?[0-9]|2[0-3]):[0-5][0-9]"
+                            }}
+                            onChange={e => updateTime(TimeType.StartTime, e.target.value)} />
+                </Grid>
+                <Grid item xs={3}>
+                  <TextField label="End time" 
+                            variant="filled"
+                            value={endTime}
+                            inputProps={{
+                              pattern: "([01]?[0-9]|2[0-3]):[0-5][0-9]"
+                            }}
+                            onChange={e => updateTime(TimeType.EndTime, e.target.value)} />
+                </Grid>
               </Grid>
             </Grid>
           </Container>
