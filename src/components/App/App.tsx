@@ -14,14 +14,19 @@ import { splitHours } from '../../helpers/TimeHelpers';
 
 /**
  * TODO:
- * - Override the presence status
- * - Change the colors
  * - Manual or automated work
  */
 const theme = createMuiTheme({
   palette: {
     type: 'dark'
   },
+  overrides: {
+    MuiSelect: {
+      select: {
+        fontSize: "calc(10px + 2vmin)"
+      }
+    }
+  }
 });
 
 class App extends React.Component<AppProps, AppState> {
@@ -182,15 +187,27 @@ class App extends React.Component<AppProps, AppState> {
     }
   }
 
+  private overwritePresense = async (presence: string | null = null): Promise<void> => {
+    if (presence) {
+      debugger;
+      this.stopPresenceCheck();
+      const color = await Luxafor.setColor(this.state.deviceId, presence as string);
+      this.setState({
+        color
+      });
+    } else {
+      this.startDataFetching();
+    }
+
+    this.setState({
+      overwrittenPresence: presence
+    });
+  }
+
   public render(): React.ReactElement<AppProps> {
     return (
       <PresenceContext.Provider value={{
-        deviceId: this.state.deviceId,
-        refreshNr: this.state.refreshNr,
-        color: this.state.color,
-        endTime: this.state.endTime,
-        startTime: this.state.startTime,
-        presence: this.state.presence,
+        ...this.state,
         error: ""
       }}>
         <ThemeProvider theme={theme}>
@@ -202,7 +219,7 @@ class App extends React.Component<AppProps, AppState> {
                     updateDeviceId={this.updateDeviceId}
                     updateTime={this.updateTime} />
   
-            <LuxaforPresence />
+            <LuxaforPresence overwritePresense={this.overwritePresense} />
 
             {
               this.state.error && <p className="app__error">{this.state.error}</p>

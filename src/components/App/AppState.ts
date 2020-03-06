@@ -4,6 +4,7 @@ export interface AppState {
   startTime: string;
   endTime: string;
   presence: string;
+  overwrittenPresence: string | null;
   color: string;
   error: string;
 }

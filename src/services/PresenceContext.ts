@@ -8,6 +8,7 @@ export const defaultContextValues = {
   startTime: Luxafor.getDeviceSetting<string>(KEY_START_TIME),
   endTime: Luxafor.getDeviceSetting<string>(KEY_END_TIME),
   presence: "",
+  overwrittenPresence: null,
   color: DEFAULT_COLOR
 } as AppState;
 
