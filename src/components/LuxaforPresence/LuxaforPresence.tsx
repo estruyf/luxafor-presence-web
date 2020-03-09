@@ -49,7 +49,7 @@ export const LuxaforPresence = (props: LuxafoPresenceProps) => {
               {
                 (info.overwrittenPresence || info.presence) && (
                   <>
-                    <Select value={info.overwrittenPresence || info.presence} onChange={handleChange} title="Manually select a presence status">
+                    <Select className="app__main_select" value={info.overwrittenPresence || info.presence} onChange={handleChange} title="Manually select a presence status">
                       {
                         Object.keys(Availability).map(key => (
                           <MenuItem value={key}>{key}</MenuItem>

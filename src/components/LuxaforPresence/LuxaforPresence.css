@@ -12,3 +12,7 @@
 .app__main__reset {
   margin-top: 15px !important;
 }
+
+.app__main_select {
+  padding-bottom: 15px;
+}
